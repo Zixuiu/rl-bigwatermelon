@@ -3,14 +3,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-
 def normalized_columns_initializer(weights, std=1.0):
+    # 初始化权重，将其归一化
     out = torch.randn(weights.size())
     out *= std / torch.sqrt(out.pow(2).sum(1, keepdim=True))
     return out
 
-
 def weights_init(m):
+    # 初始化模型参数的权重
     classname = m.__class__.__name__
     if classname.find('Conv') != -1:
         weight_shape = list(m.weight.data.size())
@@ -27,18 +27,20 @@ def weights_init(m):
         m.weight.data.uniform_(-w_bound, w_bound)
         m.bias.data.fill_(0)
 
-
 class ActorCritic(torch.nn.Module):
     def __init__(self, num_inputs, action_space):
         super(ActorCritic, self).__init__()
+        # 定义卷积层
         self.conv1 = nn.Conv2d(num_inputs, 32, 3, stride=2, padding=1)
         self.conv2 = nn.Conv2d(32, 32, 3, stride=2, padding=1)
         self.conv3 = nn.Conv2d(32, 32, 3, stride=2, padding=1)
         self.conv4 = nn.Conv2d(32, 32, 3, stride=2, padding=1)
 
+        # 定义LSTM层
         self.lstm = nn.LSTMCell(800, 256)
 
         num_outputs = 160
+        # 定义策略和值函数的全连接层
         self.critic_linear = nn.Linear(256, 1)
         self.actor_linear = nn.Linear(256, num_outputs)
 
@@ -57,6 +59,7 @@ class ActorCritic(torch.nn.Module):
 
     def forward(self, inputs):
         inputs, (hx, cx) = inputs
+        # 前向传播过程
         x = F.elu(self.conv1(inputs))
         x = F.elu(self.conv2(x))
         x = F.elu(self.conv3(x))
