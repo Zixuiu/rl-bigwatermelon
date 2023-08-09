@@ -1,11 +1,9 @@
 import math
-
 import torch
 import torch.optim as optim
 
-
 class SharedAdam(optim.Adam):
-    """Implements Adam algorithm with shared states.
+    """实现带有共享状态的Adam算法。
     """
 
     def __init__(self,
@@ -32,10 +30,9 @@ class SharedAdam(optim.Adam):
                 state['exp_avg_sq'].share_memory_()
 
     def step(self, closure=None):
-        """Performs a single optimization step.
-        Arguments:
-            closure (callable, optional): A closure that reevaluates the model
-                and returns the loss.
+        """执行单次优化步骤。
+        参数:
+            closure (callable, optional): 重新评估模型并返回损失的闭包函数。
         """
         loss = None
         if closure is not None:
@@ -56,7 +53,7 @@ class SharedAdam(optim.Adam):
                 if group['weight_decay'] != 0:
                     grad = grad.add(group['weight_decay'], p.data)
 
-                # Decay the first and second moment running average coefficient
+                # 更新一阶和二阶矩的移动平均系数
                 exp_avg.mul_(beta1).add_(1 - beta1, grad)
                 exp_avg_sq.mul_(beta2).addcmul_(1 - beta2, grad, grad)
 
