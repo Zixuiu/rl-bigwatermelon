@@ -13,6 +13,7 @@ def weights_init(m):
     # 初始化模型参数的权重
     classname = m.__class__.__name__
     if classname.find('Conv') != -1:
+#He正态分布初始化
         weight_shape = list(m.weight.data.size())
         fan_in = np.prod(weight_shape[1:4])  # 输入通道数到输出通道数的总连接数
         fan_out = np.prod(weight_shape[2:4]) * weight_shape[0]  # 输出通道数到输入通道数的总连接数
