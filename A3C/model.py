@@ -8,7 +8,7 @@ def normalized_columns_initializer(weights, std=1.0):
     out = torch.randn(weights.size())
     out *= std / torch.sqrt(out.pow(2).sum(1, keepdim=True))
     return out
-
+#主要做了初始化和模型定义
 def weights_init(m):
     # 初始化模型参数的权重
     classname = m.__class__.__name__
