@@ -3,6 +3,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+# 这段代码定义了一个Actor-Critic模型，用于强化学习中的策略优化。模型包括卷积层、LSTM层和全连接层。
+# 前向传播过程中，输入经过卷积层和LSTM层得到特征表示，然后分别通过值函数层和策略层得到值函数和动作概率。模型的参数通过初始化函数进行初始化。
+
 def normalized_columns_initializer(weights, std=1.0):
     # 初始化权重，将其归一化
     out = torch.randn(weights.size())
