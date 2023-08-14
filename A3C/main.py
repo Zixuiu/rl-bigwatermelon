@@ -4,7 +4,11 @@ from __future__ import print_function
 # 导入必要的库  
 import argparse  
 import os  
-  
+
+# 这段代码是一个使用A3C算法进行强化学习训练的示例代码。
+# 它导入了必要的库和模块，定义了命令行参数，并创建了一个共享模型和优化器。然后，它启动了一个训练进程，并将该进程添加到进程列表中。
+
+
 # 导入PyTorch库，用于构建神经网络和进行GPU加速  
 import torch  
 import torch.multiprocessing as mp  
