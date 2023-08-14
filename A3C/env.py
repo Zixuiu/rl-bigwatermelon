@@ -7,6 +7,9 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException,
 import time, random, cv2
 import numpy as np
 
+# 上面的代码是使用Selenium库来模拟游戏操作的示例代码。它定义了一个名为bigwaterlemon的类，该类包含了获取游戏状态、执行动作、重置游戏等方法。
+# 在主程序中，创建了一个bigwaterlemon的实例，并执行了300次循环操作，每次循环中随机选择一个动作并调用step方法获取状态、奖励和结束标志。
+
 url = 'http://localhost/watermelon'  # "http://www.wesane.com/game/654"
 
 def process_frame42(frame): 
