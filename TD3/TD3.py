@@ -15,10 +15,12 @@ import torch.nn.functional as F
   
 # 获取设备，如果在可用，使用GPU（cuda），否则使用CPU（cpu）  
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  
-  
-# Twin Delayed Deep Deterministic Policy Gradients (TD3)的实现  
-# 论文：https://arxiv.org/abs/1802.09477  
-  
+
+
+# 上面的代码实现了Twin Delayed Deep Deterministic Policy Gradients (TD3)算法，
+# 包括Actor-Critic模型的构建、策略网络和值网络的前向传播过程、TD3算法的训练过程等。
+
+
 # 定义Actor-Critic模型  
 class ActorCritic(torch.nn.Module):  
     def __init__(self):  
