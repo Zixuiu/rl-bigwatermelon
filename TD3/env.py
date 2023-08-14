@@ -15,7 +15,13 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException,
 import time, random, cv2  
 # 导入NumPy库，用于处理数组和矩阵  
 import numpy as np  
-  
+
+
+# 这段代码使用Selenium库来控制和操作一个游戏浏览器。
+# 代码中定义了一个名为bigwaterlemon的类，该类初始化了一个Chrome浏览器，并提供了一些方法来获取游戏状态、执行动作、重置游戏等操作。
+# 在主函数中，使用一个循环来执行一系列的动作，并获取每次动作的奖励、状态和结束标志。具体的动作是通过调用bigwaterlemon类的方法来执行的，可以是随机选择的动作。
+
+
 # 设置要访问的网页URL，这里为本地的一个示例地址，实际使用时需要替换为实际的网页URL  
 url = 'http://localhost/watermelon'  # "http://www.wesane.com/game/654"  
   
