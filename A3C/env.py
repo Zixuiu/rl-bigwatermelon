@@ -110,7 +110,7 @@ class bigwaterlemon:
         # 如果x等于self.width（可能是一个表示画面宽度的属性），那么将x减1  
         if x == self.width:  
             x -= 1  
-          
+          # 可能是为了防止动作超出游戏界面的范围。
         # 创建一个TouchActions对象，该对象提供模拟触摸屏幕的操作。参数是self.browser，可能是一个表示浏览器实例的变量  
         actions = TouchActions(self.browser)  
           
