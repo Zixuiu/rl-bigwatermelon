@@ -63,24 +63,42 @@ parser.add_argument('--log-dir', default='./logs/',
 parser.add_argument('--exp-name', default='test',  
                     help='实验名称 (默认: test)')  
   
-# 如果当前文件被作为主程序直接运行，而不是被导入到其他文件中使用，则执行以下代码块  
+# 如果当前文件被作为主程序直接运行，而不是被导入到其他文件中使用，则执行以下代码块。这是Python的一个常用模式，用于确保某些代码只在特定条件下执行。  
 if __name__ == '__main__':  
-    # 设置环境变量'OMP_NUM_THREADS'为1，这可能是为了禁用多线程的OpenMP或者指定线程数为1（具体取决于操作系统和Python环境）
-    os.environ['OMP_NUM_THREADS'] = '1'
-    os.environ['CUDA_VISIBLE_DEVICES'] = ""
-
-    args = parser.parse_args()
-
-    torch.manual_seed(args.seed)
-
-    shared_model = ActorCritic(1, 160)
-    shared_model.share_memory()
-
-    optimizer = my_optim.SharedAdam(shared_model.parameters(), lr=args.lr)
-    optimizer.share_memory()
-
-    processes = []
-
-    p = mp.Process(target=train, args=(args.num_processes, args, shared_model))
-    p.start()
+  
+    # 设置环境变量'OMP_NUM_THREADS'为1，这可能是为了禁用多线程的OpenMP或者指定线程数为1（具体取决于操作系统和Python环境）。  
+    # OpenMP是一个用于编程语言（如C，C++，Fortran）的并行计算API，它允许程序员在程序中指定可以并行执行的任务。  
+    # 在某些情况下，为了防止并行计算带来的问题（如数据竞争、线程同步等），可能需要禁用或限制OpenMP的线程数。  
+    os.environ['OMP_NUM_THREADS'] = '1'  
+  
+    # 设置环境变量'CUDA_VISIBLE_DEVICES'为空字符串，这可能是为了在程序运行时不使用CUDA（如果程序依赖于GPU计算的话）。  
+    # CUDA是NVIDIA推出的并行计算平台和API，它允许开发者使用GPU进行通用计算。但是，如果环境没有安装CUDA或者没有可用的GPU，这个设置可以防止程序在运行时出现错误。  
+    os.environ['CUDA_VISIBLE_DEVICES'] = ""  
+  
+    # 使用argparse模块解析命令行参数  
+    args = parser.parse_args()  
+  
+    # 设置PyTorch的随机种子，以确保结果的可重复性。这对于需要随机性的算法（如强化学习）非常重要。  
+    torch.manual_seed(args.seed)  
+  
+    # 创建一个Actor-Critic模型，这个模型通常用于处理同时需要行为和状态估计的决策问题。这里的具体参数（1和160）不清楚，可能是某种特定的模型配置。  
+    shared_model = ActorCritic(1, 160)  
+  
+    # 将模型设置为可以在多个进程之间共享的状态。这对于分布式强化学习算法非常重要。  
+    shared_model.share_memory()  
+  
+    # 创建一个Adam优化器，用于在训练过程中调整模型的参数。这里的具体参数（优化器的类型、学习率等）可能根据模型和任务的不同而变化。  
+    optimizer = my_optim.SharedAdam(shared_model.parameters(), lr=args.lr)  
+  
+    # 和模型一样，将优化器设置为可以在多个进程之间共享的状态。  
+    optimizer.share_memory()  
+  
+    # 创建一个空的进程列表，用于存储后续创建的进程。  
+    processes = []  
+  
+    # 创建一个新的进程，指定它的目标是运行名为'train'的函数，并传递必要的参数。这里的具体参数可能根据模型、任务和训练策略的不同而变化。  
+    p = mp.Process(target=train, args=(args.num_processes, args, shared_model))  
+    p.start()  # 启动新创建的进程  
+  
+    # 将新创建的进程添加到进程列表中，以便后续可以管理和监控这些进程。  
     processes.append(p)
