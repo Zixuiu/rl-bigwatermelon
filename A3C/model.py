@@ -12,23 +12,34 @@ def normalized_columns_initializer(weights, std=1.0):
     out *= std / torch.sqrt(out.pow(2).sum(1, keepdim=True))
     return out
 #主要做了初始化和模型定义
-def weights_init(m):
-    # 初始化模型参数的权重
+def weights_init(m):  # 定义一个函数，名为weights_init，输入参数为m，是一个神经网络模型中的模块
+    # 获取当前模块的类名
     classname = m.__class__.__name__
-    if classname.find('Conv') != -1:
-#He正态分布初始化
-        weight_shape = list(m.weight.data.size())
-        fan_in = np.prod(weight_shape[1:4])  # 输入通道数到输出通道数的总连接数
-        fan_out = np.prod(weight_shape[2:4]) * weight_shape[0]  # 输出通道数到输入通道数的总连接数
+    if classname.find('Conv') != -1:  # 如果模块的类名包含'Conv'（即该模块是卷积层）
+        # 对卷积层的权重进行初始化
+        weight_shape = list(m.weight.data.size())  # 获取权重的形状（大小）
+        # 计算输入通道数到输出通道数的总连接数（即所谓的fan_in）
+        fan_in = np.prod(weight_shape[1:4])
+        # 计算输出通道数到输入通道数的总连接数（即所谓的fan_out）
+        fan_out = np.prod(weight_shape[2:4]) * weight_shape[0]
+        # He正态分布的权重初始化公式中的系数计算
         w_bound = np.sqrt(6. / (fan_in + fan_out))
-        m.weight.data.uniform_(-w_bound, w_bound)  # 均匀分布初始化权重
-        m.bias.data.fill_(0)  # 初始化偏差为0
-    elif classname.find('Linear') != -1:
-        weight_shape = list(m.weight.data.size())
-        fan_in = weight_shape[1]  # 输入单元数
-        fan_out = weight_shape[0]  # 输出单元数
-        w_bound = np.sqrt(6. / (fan_in + fan_out))
+        # 使用均匀分布对权重进行初始化，权重值在-w_bound和w_bound之间
         m.weight.data.uniform_(-w_bound, w_bound)
+        # 初始化偏差为0
+        m.bias.data.fill_(0)
+    elif classname.find('Linear') != -1:  # 如果模块的类名包含'Linear'（即该模块是全连接层）
+        # 对全连接层的权重进行初始化
+        weight_shape = list(m.weight.data.size())
+        # 计算输入单元数（即权重矩阵的列数）
+        fan_in = weight_shape[1]
+        # 计算输出单元数（即权重矩阵的行数）
+        fan_out = weight_shape[0]
+        # He正态分布的权重初始化公式中的系数计算
+        w_bound = np.sqrt(6. / (fan_in + fan_out))
+        # 使用均匀分布对权重进行初始化，权重值在-w_bound和w_bound之间
+        m.weight.data.uniform_(-w_bound, w_bound)
+        # 初始化偏差为0
         m.bias.data.fill_(0)
 
 class ActorCritic(torch.nn.Module):
