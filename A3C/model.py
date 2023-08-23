@@ -71,17 +71,18 @@ class ActorCritic(torch.nn.Module):
         self.lstm.bias_hh.data.fill_(0)  # 初始化LSTM隐藏层的偏差为0
 
         self.train()  # 设置为训练模式，激活批量归一化和 dropout
-
-    def forward(self, inputs):
-        inputs, (hx, cx) = inputs
-        # 前向传播过程
-        x = F.elu(self.conv1(inputs))
-        x = F.elu(self.conv2(x))
-        x = F.elu(self.conv3(x))
-        x = F.elu(self.conv4(x))
-
-        x = x.view(-1, 800)  # 将 x 重新视为第一个维度形状为 800
-        hx, cx = self.lstm(x, (hx, cx))  # 将 x 和 (hx, cx) 作为输入传递给 LSTM 单元
-        x = hx
-
-        return self.critic_linear(x), self.actor_linear(x), (hx, cx)
+def forward(self, inputs):  # 定义一个名为forward的函数，该函数是网络模型的前向传播过程，接收输入数据inputs
+    inputs, (hx, cx) = inputs  # 从输入数据inputs中分离出两部分，一部分是网络输入，另一部分是RNN的初始状态，即隐藏状态(hx)和细胞状态(cx)
+    # 下面是网络的前向传播过程，使用四个卷积层进行特征提取
+    x = F.elu(self.conv1(inputs))  # 输入数据经过第一层卷积层conv1的变换，然后通过指数线性单元（ELU）激活函数进行非线性变换
+    x = F.elu(self.conv2(x))  # 经过第二层卷积层conv2的变换，再通过ELU激活函数
+    x = F.elu(self.conv3(x))  # 经过第三层卷积层conv3的变换，再通过ELU激活函数
+    x = F.elu(self.conv4(x))  # 经过第四层卷积层conv4的变换，再通过ELU激活函数
+    # 将经过多轮卷积后的特征图x重新调整为第一个维度为800的形状，便于后续的LSTM处理
+    x = x.view(-1, 800)
+    # 将处理后的特征图x和RNN的初始状态(hx, cx)作为输入传递给LSTM单元进行序列处理
+    hx, cx = self.lstm(x, (hx, cx))
+    # 取出LSTM的最后一个时刻的隐藏状态，作为DRNN的最终输出
+    x = hx
+    # 分别通过两个线性层对DRNN的输出进行处理，得到评判网络（critic）和行动网络（actor）的输出
+    return self.critic_linear(x), self.actor_linear(x), (hx, cx)  # 返回评判网络的输出、行动网络的输出以及更新后的RNN状态
