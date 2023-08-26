@@ -7,9 +7,8 @@ class SharedAdam(optim.Adam):
     """
 
 
-# SharedAdam是一个继承自torch.optim.Adam的类，实现了带有共享状态的Adam算法。它重写了父类的step方法，实现了参数更新的逻辑。
-# 在step方法中，遍历每个参数组和参数，根据Adam优化算法的公式更新参数。同时，通过share_memory方法，将优化器的状态信息共享到多个进程中。
-    
+# SharedAdam是一个实现了带有共享状态的Adam优化算法的类。它继承自torch.optim.Adam。
+# 并重写了step方法来实现参数的更新。通过共享优化器的状态信息，可以在多个进程中同时进行参数更新。
     def __init__(self,
                  params,
                  lr=1e-3,
